@@ -1,6 +1,7 @@
 
 import os
 # import sys
+from functions import *
 
 DIR = os.path.dirname(os.path.realpath(__file__))
 
@@ -84,52 +85,23 @@ yiconshift = 55
 xtextshift=95
 xiconshift=60
 
-
-def save(text, file_path):
-    # with open(file_path,'w',encoding="utf-8") as f:
-    with open(file_path,'w',encoding="utf-16") as f:
-    # with open(file_path,'w') as f:
-        f.write(text)
-
-def get_files(root):
-    result = []
-
-    result.append(root)
-    for i in os.listdir(root):
-        if i.startswith('~') or i.endswith('.ini') or i.endswith('.tmp'):
-            pass
-        else:
-            result.append(os.path.join(root,i))
-
-    # result.insert(0,root)
-    return result
-
-def get_icon(path):
-    
-    if path.endswith('Desktop'):
-        return '\uf108'
-    if '.py' in path:
-        return '\ue235'
-    if '.bat' in path:
-        return '\ue795'
-    if path.endswith('.wt.lnk'):
-        return '\ue795'
-    if path.endswith(' - Shortcut.lnk'):
-        return '\uf482'
-    if path.endswith('.lnk'):
-        return '\uf481'
-    if path.endswith('.url'):
-        return '\uf465'
-    
-    return '\ue5ff'
-
-
-def get_text(path):
-    
-    result = path.split('\\')[-1]
-    result = result.replace(" - Shortcut.lnk", "")
-    result = result.replace(".lnk", "")
-    return result[:35]
+# regex patters that map to nerd font icons
+icon_map_00 = {
+    # 'Desktop$':'\uf108 - desktop',
+    # '\.py':'\ue235 - python',
+    # '\.bat':'\ue795 - bat',
+    # '\.wt(\.|)':'\ue795 - winterminal',
+    # '\.url$':'\uf465 - url',
+    # ' - Shortcut\.lnk':'\uf482 - folderlink',
+    'Desktop$':'\uf108',
+    '\.py':'\ue235',
+    '\.bat':'\ue795',
+    '\.wt(\.|)':'\ue795',
+    '\.vbs(\.|)':'\uf481',
+    '\.url$':'\uf465',
+    ' - Shortcut\.lnk':'\uf482',
+    '\.txt':'\uf15c',
+}
 
 def main():
     # save(test.format(v='hello'),os.path.join(DIR,'hello.ini'))
@@ -137,7 +109,7 @@ def main():
     rm = rainmeter
     rm += variables
 
-    files = get_files(r'C:\Users\JGarza\Desktop')
+    files = get_files(r'C:\Users\JGarza\Desktop',add_root=True)
     print(*files,sep='\n')
 
     for index,f in enumerate(files):
@@ -148,7 +120,7 @@ def main():
         shape = shape.format(index=index,path=f,Y=Y)
 
         icon = metericon
-        icon = icon.format(index=index,Y=(Y+yiconshift),X=xiconshift,icon=get_icon(f))
+        icon = icon.format(index=index,Y=(Y+yiconshift),X=xiconshift,icon=get_icon(f,icon_map_00))
 
         text = metertext
         text = text.format(index=index,Y=(Y+ytextshift),X=xtextshift,text=get_text(f))

@@ -24,9 +24,9 @@ python refreshrm_small.py
 ## todo
 maybe i'll get around to doing these.
 
- - [ ] put get_icons in it's own py script
- - [ ] put get_text in it's own py script
- - [ ] put some of the strings in their own py scripts
+ - [X] put get_icons in it's own py script
+ - [X] put get_text in it's own py script
+ - [skipped] put some of the strings in their own py scripts
  - [ ] make refreshrm_medium.py
  - [ ] make refreshrm_large.py
  - [ ] get suggestions from other people
