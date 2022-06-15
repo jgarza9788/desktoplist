@@ -11,14 +11,16 @@ rainmeter = """
 Update=1000
 AccurateText=1
 DynamicWindowSize=1
+blur=1
 
 """
 
 variables = """
 
 [variables]
-RECSHAPE = 50,50,400,50,10
-NORMALCOLOR = 0,0,0,190
+RECSHAPE = 50,50,600,75,10
+;NORMALCOLOR = 31,31,31,225
+NORMALCOLOR = 0,0,0,200
 HOVERCOLOR = 66, 156, 227,255
 ;HOVERCOLOR = 43, 103, 150,255
 ICONCOLOR = 255,255,255,255
@@ -51,7 +53,7 @@ metericon = """
 [MeterIcon{index}]
 Meter=String
 FontFace=Hack NF
-FontSize=24
+FontSize=48
 FontColor=#ICONCOLOR#
 SolidColor=47,47,47,0
 ;Padding=32,32,32,32
@@ -62,13 +64,14 @@ Text="{icon}"
 
 """
 
+
 metertext = """
 
 [MeterText{index}]
 Meter=String
 FontFace=Hack NF
 ;FontFace=Comic Sans MS
-FontSize=12
+FontSize=24
 FontColor=#TEXTCOLOR#
 SolidColor=47,47,47,0
 ;Padding=32,32,32,32
@@ -82,11 +85,11 @@ Text="{text}"
 #FontFace=Hack NF
 
 
-yshift = 60
-ytextshift = 65
-yiconshift = 55
-xtextshift=95
-xiconshift=60
+yshift = 100
+ytextshift = 70
+yiconshift = 50
+xtextshift= 125
+xiconshift=70
 
 # regex patters that map to nerd font icons
 icon_map_00 = {
@@ -106,6 +109,15 @@ icon_map_00 = {
     '\.txt':'\uf15c',
 }
 
+# COLORS = [
+#             "244, 0, 95,255",
+#             "152, 224, 36,255",
+#             "250, 132, 25,255",
+#             "157, 101, 255,255",
+#             "88, 209, 235,255"
+#         ]
+
+# COLORS = ["66, 156, 227,255"]
 COLORS = [
     "102,217,239,255",
     "166,226,46,255",
@@ -114,6 +126,7 @@ COLORS = [
     "174,129,255,255"
     ]
 
+
 def main():
     # save(test.format(v='hello'),os.path.join(DIR,'hello.ini'))
     # pass
@@ -121,6 +134,7 @@ def main():
     rm += variables
 
     files = get_files(r'C:\Users\JGarza\Desktop',add_root=True,exclude_pattern='^(__|@|\.)')
+    # files = get_files(r'C:\Users\JGarza',add_root=True,exclude_pattern='^(__|@|\.)')
     print(*files,sep='\n')
 
     for index,f in enumerate(files):
@@ -128,20 +142,23 @@ def main():
         Y = yshift*index
 
         shape = metershape
-        # shape = shape.format(index=index,path=f,Y=Y)
         shape = shape.format(index=index,path=f,Y=Y,HOVERCOLOR=COLORS[index % len(COLORS)])
+
+
 
         icon = metericon
         icon = icon.format(index=index,Y=(Y+yiconshift),X=xiconshift,icon=get_icon(f,icon_map_00))
 
         text = metertext
-        text = text.format(index=index,Y=(Y+ytextshift),X=xtextshift,text=get_text(f))
+        text = text.format(index=index,Y=(Y+ytextshift),X=xtextshift,text=get_text(f,25))
 
         rm += shape
         rm += icon
         rm += text
+
+
     
-    save(rm,os.path.join(DIR,'desktoplist_small.ini'))
+    save(rm,os.path.join(DIR,'desktoplist_medium.ini'))
 
 
 

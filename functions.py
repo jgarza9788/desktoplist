@@ -13,7 +13,7 @@ def save(contents, file_path):
     with open(file_path,'w',encoding="utf-16") as f:
         f.write(contents)
 
-def get_files(root,add_root = False):
+def get_files(root,add_root = False,exclude_pattern=''):
     """gets the files from the desktop
 
     Args:
@@ -30,6 +30,8 @@ def get_files(root,add_root = False):
     
     for i in os.listdir(root):
         if i.startswith('~') or i.endswith('.ini') or i.endswith('.tmp'):
+            pass
+        elif re.match(pattern=exclude_pattern,string=i):
             pass
         else:
             result.append(os.path.join(root,i))
@@ -77,7 +79,7 @@ def get_icon(path,icon_map):
     # return '\ue5ff'
 
 
-def get_text(path):
+def get_text(path,max_chars=35):
     """gets text from the path
 
     Args:
@@ -89,7 +91,7 @@ def get_text(path):
     result = path.split('\\')[-1]
     result = result.replace(" - Shortcut.lnk", "")
     result = result.replace(".lnk", "")
-    return result[:35]
+    return result[:max_chars]
 
 if __name__ == '__main__':
 
