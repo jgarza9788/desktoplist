@@ -125,6 +125,8 @@ def main():
     rm += variables
 
     files = get_files(r'C:\Users\JGarza\Desktop',add_root=True,exclude_pattern='^(__|@|\.)')
+    files.append(get_recycle_bin_link())
+    files.append(get_run_refresh(__file__))
     print(*files,sep='\n')
 
     shape = metershape

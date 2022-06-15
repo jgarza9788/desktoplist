@@ -17,7 +17,7 @@ DynamicWindowSize=1
 variables = """
 
 [variables]
-RECSHAPE = 50,50,400,50,10
+RECSHAPE = 50,50,500,75,10
 NORMALCOLOR = 0,0,0,190
 HOVERCOLOR = 66, 156, 227,255
 ;HOVERCOLOR = 43, 103, 150,255
@@ -32,16 +32,17 @@ metershape = """
 
 [MeterShapes{index}]
 Meter=Shape
-Shape=Rectangle #RECSHAPE# | Fill Color #NORMALCOLOR# | StrokeWidth 0
-;MouseOverAction=[!SetOption MeterShapes{index} Shape "Rectangle #RECSHAPE# | Fill Color {HOVERCOLOR} | StrokeWidth 0"][!SetOption MeterIcon{index} FontColor #ICONHOVERCOLOR#][!SetOption MeterText{index} FontColor #TEXTHOVERCOLOR#][!UpdateMeter MeterShapes{index}][!UpdateMeter MeterIcon{index}][!UpdateMeter MeterText{index}][!Redraw]
-;MouseLeaveAction=[!SetOption MeterShapes{index} Shape "Rectangle #RECSHAPE# | Fill Color #NORMALCOLOR# | StrokeWidth 0"][!SetOption MeterIcon{index} FontColor #ICONCOLOR#][!SetOption MeterText{index} FontColor #TEXTCOLOR#][!UpdateMeter MeterShapes{index}][!UpdateMeter MeterIcon{index}][!UpdateMeter MeterText{index}][!Redraw]
-MouseOverAction=[!SetOption MeterIcon{index} FontColor {HOVERCOLOR}][!SetOption MeterText{index} FontColor {HOVERCOLOR}][!UpdateMeter MeterIcon{index}][!UpdateMeter MeterText{index}][!Redraw]
-MouseLeaveAction=[!SetOption MeterIcon{index} FontColor #ICONCOLOR#][!SetOption MeterText{index} FontColor #TEXTCOLOR#][!UpdateMeter MeterIcon{index}][!UpdateMeter MeterText{index}][!Redraw]
-LeftMouseUpAction=["{path}"]
-Y={Y}
-
+Shape=Rectangle 0,0,750,{height},10 | Fill Color #NORMALCOLOR# | StrokeWidth 0
 
 """
+# ;MouseOverAction=[!SetOption MeterShapes{index} Shape "Rectangle #RECSHAPE# | Fill Color {HOVERCOLOR} | StrokeWidth 0"][!SetOption MeterIcon{index} FontColor #ICONHOVERCOLOR#][!SetOption MeterText{index} FontColor #TEXTHOVERCOLOR#][!UpdateMeter MeterShapes{index}][!UpdateMeter MeterIcon{index}][!UpdateMeter MeterText{index}][!Redraw]
+# ;MouseLeaveAction=[!SetOption MeterShapes{index} Shape "Rectangle #RECSHAPE# | Fill Color #NORMALCOLOR# | StrokeWidth 0"][!SetOption MeterIcon{index} FontColor #ICONCOLOR#][!SetOption MeterText{index} FontColor #TEXTCOLOR#][!UpdateMeter MeterShapes{index}][!UpdateMeter MeterIcon{index}][!UpdateMeter MeterText{index}][!Redraw]
+# ;MouseOverAction=[!SetOption MeterIcon{index} FontColor {HOVERCOLOR}][!SetOption MeterText{index} FontColor {HOVERCOLOR}][!UpdateMeter MeterIcon{index}][!UpdateMeter MeterText{index}][!Redraw]
+# ;MouseLeaveAction=[!SetOption MeterIcon{index} FontColor #ICONCOLOR#][!SetOption MeterText{index} FontColor #TEXTCOLOR#][!UpdateMeter MeterIcon{index}][!UpdateMeter MeterText{index}][!Redraw]
+
+# ;LeftMouseUpAction=["{path}"]
+# ;Y={Y}
+
 # ;MouseOverAction=[!SetOption MeterText Text "{icon0} {text}"][!SetOption MeterShapes Shape "Rectangle 50,50,500,100,10 | Fill Color #RED# | StrokeWidth 0"][!UpdateMeter MeterText][!UpdateMeter MeterShapes][!Redraw]
 # ;MouseLeaveAction=[!SetOption MeterText Text "{icon1} {text}"][!SetOption MeterShapes Shape "Rectangle 50,50,500,100,10 | Fill Color #WHITE# | StrokeWidth 0"][!UpdateMeter MeterText][!UpdateMeter MeterShapes][!Redraw]
 
@@ -68,24 +69,27 @@ metertext = """
 Meter=String
 FontFace=Hack NF
 ;FontFace=Comic Sans MS
-FontSize=12
+FontSize=32
 FontColor=#TEXTCOLOR#
 SolidColor=47,47,47,0
-;Padding=32,32,32,32
+Padding=14,14,14,14
 AntiAlias=1
 Y={Y}
 X={X}
-Text="{text}"
+Text="{icon} {text}"
+MouseOverAction=[!SetOption MeterText{index} FontColor {HOVERCOLOR}][!UpdateMeter MeterText{index}][!Redraw]
+MouseLeaveAction=[!SetOption MeterText{index} FontColor #TEXTCOLOR#][!UpdateMeter MeterText{index}][!Redraw]
+LeftMouseUpAction=["{path}"]
 
 """
 # ;FontFace=Comic Sans MS
 #FontFace=Hack NF
 
 
-yshift = 60
-ytextshift = 65
+yshift = 75
+ytextshift = 0
 yiconshift = 55
-xtextshift=95
+xtextshift=5
 xiconshift=60
 
 # regex patters that map to nerd font icons
@@ -121,35 +125,45 @@ def main():
     rm += variables
 
     files = get_files(r'C:\Users\JGarza\Desktop',add_root=True,exclude_pattern='^(__|@|\.)')
-
     files.append(get_recycle_bin_link())
     files.append(get_run_refresh(__file__))
-
     print(*files,sep='\n')
+
+    shape = metershape
+    shape = shape.format(index=0,height=75*len(files))
+    # shape = shape.format(index=0,height=55)
+
+    rm += shape
 
     for index,f in enumerate(files):
 
         Y = yshift*index
 
-        shape = metershape
-        # shape = shape.format(index=index,path=f,Y=Y)
-        shape = shape.format(index=index,path=f,Y=Y,HOVERCOLOR=COLORS[index % len(COLORS)])
+        # shape = metershape
+        # # shape = shape.format(index=index,path=f,Y=Y)
+        # shape = shape.format(index=index,path=f,Y=Y,HOVERCOLOR=COLORS[index % len(COLORS)])
 
-        icon = metericon
-        icon = icon.format(index=index,Y=(Y+yiconshift),X=xiconshift,icon=get_icon(f,icon_map_00))
+        # icon = metericon
+        # icon = icon.format(index=index,Y=(Y+yiconshift),X=xiconshift,icon=get_icon(f,icon_map_00))
 
         text = metertext
-        text = text.format(index=index,Y=(Y+ytextshift),X=xtextshift,text=get_text(f))
+        text = text.format(
+            index=index,
+            Y=(Y+ytextshift),
+            X=xtextshift,
+            icon=get_icon(f,icon_map_00),
+            text=get_text(f,25),
+            path=f,
+            HOVERCOLOR=COLORS[index % len(COLORS)],
+            )
 
-        rm += shape
-        rm += icon
+        # rm += shape
+        # rm += icon
         rm += text
     
-    save(rm,os.path.join(DIR,'desktoplist_small.ini'))
+    save(rm,os.path.join(DIR,'desktoplist_medium_alt.ini'))
 
 
 
 if __name__ == "__main__":
-    # print(__file__)
-    # quit()
     main()

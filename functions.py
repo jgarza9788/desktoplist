@@ -1,7 +1,7 @@
 import os
 import re
 
-
+DIR = os.path.dirname(os.path.realpath(__file__))
 
 def save(contents, file_path):
     """saves the rainmeter .ini file
@@ -39,7 +39,12 @@ def get_files(root,add_root = False,exclude_pattern=''):
     # result.insert(0,root)
     return result
 
+# https://docs.rainmeter.net/tips/launching-windows-special-folders/
+def get_recycle_bin_link():
+    return '::{645FF040-5081-101B-9F08-00AA002F954E}'
 
+def get_run_refresh(file):
+    return 'python ' + file
 
 def get_icon(path,icon_map):
     """returns an unicode icon from nerd fronts
